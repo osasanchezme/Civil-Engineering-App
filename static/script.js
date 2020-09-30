@@ -44,7 +44,12 @@ function drawLine(xi, yi, xj, yj, linewidth = 0.5, color = "black"){
 }
 
 /**
- * Pls document 
+ * Writes text with given params in the given coords
+ * @param {Number} x x-coord (canvas-relative) in which to place the text
+ * @param {Number} y y-coord (canvas-relative) in which to place the text
+ * @param {string} content Text content
+ * @param {String} color Desired color for the text. Default: "black"
+ * @param {String} size Desired style for the text. Default: "30px Comic Sans M"
  */
 function writeText(x ,y , content, color = "black", size = "30px Comic Sans M"){
     var canvas = document.getElementById("myCanvas");
@@ -66,6 +71,7 @@ function drawGrids(x_grids){
 
 /**
 * Loads the ribbon
+* @returns {HTMLDivElement} Div ribbon containing all the needed elements, also appends itself to the document body
 */
 function loadRibbon(){
     // Create the ribbon
@@ -97,6 +103,8 @@ function loadRibbon(){
 
 /**
 * Loads the canvas
+* @param {HTMLDivElement} ribbon Div which represents the ribbon
+* @returns {HTMLCanvasElement} A canvas that will be the drawing area
 */
 function loadCanvas(ribbon){
     const canvas = document.createElement("canvas");
@@ -108,7 +116,8 @@ function loadCanvas(ribbon){
 }
 
 /**
-* Grid ribbon functionality
+* Grid section in the main Ribbon
+* @param {HTMLDivElement} ribbon Div which represents the ribbon
 */
 function addGridRibbon(ribbon){
     const gridsDiv = document.createElement("div");
@@ -154,12 +163,16 @@ function addGridRibbon(ribbon){
         list.style.className = "form-control form-control-sm";
         list.style.width = "100px";
         opt = document.createElement("option");
-        opt.innerHTML = "No grid"
+        opt.innerHTML = "Agregar..."
         list.appendChild(opt);
         gridsDiv.appendChild(list);
     }
 }
 
+/**
+ * Draws the axis on the canvas
+ * @param {HTMLCanvasElement} canvas Element in which to place the axis
+ */
 function loadAxis(canvas){
     drawLine(100, canvas.height - 100, 150, canvas.height - 100, 2, "green");
     drawLine(100, canvas.height - 100, 100, canvas.height - 150, 2, "red");
