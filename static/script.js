@@ -3,9 +3,8 @@ window.onload = function(){
     const canvas = loadCanvas(ribbon);
     mousepos();
 
-    drawLine(0,0,10,10);
-    let x_grids = [200, 400];
-    drawGrids(x_grids);
+    // let x_grids = [200, 400];
+    // drawGrids(x_grids);
     loadAxis(canvas);
 }
 
@@ -130,6 +129,27 @@ function addGridRibbon(ribbon){
     gridsDiv.appendChild(document.createElement("br"));
     createGridCreator("y", "addGridyValue", "addGridyBtn", "addGridySel", gridsDiv);
 
+    document.getElementById("addGridxBtn").addEventListener('click', function(){
+        let value = Number(document.getElementById("addGridxValue").value);
+        if (isNaN(value)){
+            window.alert("Por favor ingresa un número válido!")
+        }else {
+            let x = value + Number(window.localStorage.getItem("x_orig"));
+            drawLine(x, Number(document.getElementById("myCanvas").height), x, 0);
+        }
+    });
+
+    document.getElementById("addGridyBtn").addEventListener('click', function(){
+        let value = Number(document.getElementById("addGridyValue").value);
+        if (isNaN(value)){
+            window.alert("Por favor ingresa un número válido!")
+        }else {
+            // let y = Number(document.getElementById("myCanvas").height) - Number(window.localStorage.getItem("y_orig")) - value;
+            let y = Number(window.localStorage.getItem("y_orig")) - value;
+            drawLine(0, y, Number(document.getElementById("myCanvas").width), y);
+        }
+    });
+
 
     function createGridCreator(labelStr, inputID, buttonID, selectID, gridsDiv){
         const lbl = document.createElement("label");
@@ -174,8 +194,12 @@ function addGridRibbon(ribbon){
  * @param {HTMLCanvasElement} canvas Element in which to place the axis
  */
 function loadAxis(canvas){
-    drawLine(100, canvas.height - 100, 150, canvas.height - 100, 2, "green");
-    drawLine(100, canvas.height - 100, 100, canvas.height - 150, 2, "red");
+    let x_org = 100; // Distance from the left in px
+    let y_org = 100; // Distance from the bottom in px
+    window.localStorage.setItem("x_orig", x_org)
+    window.localStorage.setItem("y_orig", Number(canvas.height) - y_org)
+    drawLine(x_org, canvas.height - y_org, x_org + 50, canvas.height - y_org, 2, "green");
+    drawLine(x_org, canvas.height - y_org, x_org, canvas.height - y_org - 50, 2, "red");
     writeText(150 + 10, canvas.height - 100 + 5,"X","black", "20px Comic Sans M");
     writeText(100, canvas.height - 150 - 7 ,"Y","black", "20px Comic Sans M");
 }
