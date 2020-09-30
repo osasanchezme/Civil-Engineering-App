@@ -183,7 +183,7 @@ function addGridRibbon(ribbon){
         list.style.className = "form-control form-control-sm";
         list.style.width = "100px";
         opt = document.createElement("option");
-        opt.innerHTML = "Agregar..."
+        opt.innerHTML = "Agregando..."
         list.appendChild(opt);
         gridsDiv.appendChild(list);
     }
