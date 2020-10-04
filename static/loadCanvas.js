@@ -73,3 +73,9 @@ function loadAxis(canvas){
     writeText(150 + 10, canvas.height - 100 + 5,"X","black", "20px Comic Sans M");
     writeText(100, canvas.height - 150 - 7 ,"Y","black", "20px Comic Sans M");
 }
+
+function erase(x, y, w, h){
+    let canvas = document.getElementById("myCanvas");
+    let ctx = canvas.getContext("2d");
+    ctx.clearRect(x, y, w, h)
+}
