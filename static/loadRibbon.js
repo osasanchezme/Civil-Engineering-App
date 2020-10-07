@@ -53,7 +53,8 @@ function addGridRibbon(ribbon){
         if (isNaN(value)){
             window.alert("Por favor ingresa un número válido!")
         }else {
-            let x = value + Number(window.localStorage.getItem("x_orig"));
+            // let x = value + Number(window.localStorage.getItem("x_orig"));
+            let x = value*Number(localStorage.getItem("x_scale")) + Number(window.localStorage.getItem("x_orig"));
             drawLine(x, Number(window.localStorage.getItem("y_orig")), x, 0);
         }
     });
@@ -149,8 +150,8 @@ function addScaleRibbon(ribbon){
     scaleDiv.appendChild(btnp);
 
     btnp.addEventListener('click', function(){
-        let scale = Number(document.getElementById("scale").value);
-        if (isNaN(scale)){
+        let model_xDim = Number(document.getElementById("scale").value);
+        if (isNaN(model_xDim)){
             window.alert("Por favor ingresa un número!")
         }else{
             let x_orig = window.localStorage.getItem("x_orig");
@@ -159,13 +160,12 @@ function addScaleRibbon(ribbon){
             drawLine(Number(x_orig), Number(y_orig) + 50, Number(window.innerWidth) - Number(x_orig), Number(y_orig) + 50);
             drawLine(Number(x_orig), Number(y_orig) + 35, Number(x_orig), Number(y_orig) + 65);
             drawLine(Number(window.innerWidth) - Number(x_orig), Number(y_orig) + 35, Number(window.innerWidth) - Number(x_orig), Number(y_orig) + 65);
-            let msg = String(scale) + " " + document.getElementById("units").value;
+            let msg = String(model_xDim) + " " + document.getElementById("units").value;
             writeText(Number(window.innerWidth)/2, Number(y_orig) + 35, msg, "gray", "20px Comic Sans M");
-            window.localStorage.setItem("x_scale", String(scale))
+            window.localStorage.setItem("x_scale", String((Number(window.innerWidth)-(2*Number(localStorage.getItem("x_orig"))))/model_xDim));
         }
     })
 
-    // Add the button and then check if it is a number and then draw the scaling line
     // Also add the ability to import different parts of an existant model
     // Delete grids
 }
