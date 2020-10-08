@@ -53,9 +53,9 @@ function addGridRibbon(ribbon){
         if (isNaN(value)){
             window.alert("Por favor ingresa un número válido!")
         }else {
-            // let x = value + Number(window.localStorage.getItem("x_orig"));
-            let x = value*Number(localStorage.getItem("x_scale")) + Number(window.localStorage.getItem("x_orig"));
-            drawLine(x, Number(window.localStorage.getItem("y_orig")), x, 0);
+            // let x = value + Number(localStorage.getItem("x_orig"));
+            let x = value*Number(localStorage.getItem("x_scale")) + Number(localStorage.getItem("x_orig"));
+            drawLine(x, Number(localStorage.getItem("y_orig")), x, 0);
         }
     });
 
@@ -64,8 +64,9 @@ function addGridRibbon(ribbon){
         if (isNaN(value)){
             window.alert("Por favor ingresa un número válido!")
         }else {
-            let y = Number(window.localStorage.getItem("y_orig")) - value;
-            drawLine(Number(window.localStorage.getItem("x_orig")), y, Number(document.getElementById("myCanvas").width) - Number(window.localStorage.getItem("x_orig")), y);
+            // let y = Number(localStorage.getItem("y_orig")) - value;
+            let y = Number(localStorage.getItem("y_orig")) - (value*Number(localStorage.getItem("y_scale")));
+            drawLine(Number(localStorage.getItem("x_orig")), y, Number(document.getElementById("myCanvas").width) - Number(localStorage.getItem("x_orig")), y);
         }
     });
 
@@ -113,56 +114,65 @@ function addGridRibbon(ribbon){
  * @param {HTMLDivElement} ribbon Div which represents the ribbon
  */
 function addScaleRibbon(ribbon){
-    const scaleDiv = document.createElement("div");
-    scaleDiv.className = "ribbon_divs";
-    scaleDiv.style.width = "300px";
-    scaleDiv.style.height = ribbon.style.height;
-    ribbon.appendChild(scaleDiv);
-    const title = document.createElement("label");
-    title.innerHTML = "Escala:\xa0"
-    scaleDiv.appendChild(title);
-    const inputScale = document.createElement("input");
-    inputScale.id = "scale";
-    inputScale.style.className = "form-control"
-    inputScale.type = "text";
-    inputScale.style.width = "100px"
-    inputScale.style.marginTop = "10px"
-    scaleDiv.appendChild(inputScale);
-    scaleDiv.appendChild(inputScale);
-    const space = document.createElement("label");
-    space.innerHTML = "\xa0";
-    scaleDiv.appendChild(space)
-    const list = document.createElement("select");
-    list.id = "units";
-    list.style.className = "form-control form-control-sm";
-    list.style.width = "50px";
-    let units = ["mm", "cm", "m", "inch", "ft"];
-    for (unit in units){
-        opt = document.createElement("option");
-        opt.innerHTML = units[unit];
-        list.appendChild(opt);
-    }
-    list.selectedIndex = 2;
-    scaleDiv.appendChild(list);
-    const btnp = document.createElement("button"); btnp.id = "addScale"; btnp.className = "btn btn-primary btn-sm"; btnp.style.padding = "3px"; btnp.style.height = "30px"; btnp.style.width = "30px";
-    btnp.innerHTML = "+"
-    btnp.style.padding = "0px"; btnp.style.border = "0px"; btnp.style.textAlign = "center"; btnp.style.marginLeft = "10px"; btnp.style.marginRight = "20px";
-    scaleDiv.appendChild(btnp);
+    const scaleDiv = document.createElement("div"); scaleDiv.className = "ribbon_divs"; scaleDiv.style.width = "300px"; scaleDiv.style.height = ribbon.style.height; ribbon.appendChild(scaleDiv);
 
-    btnp.addEventListener('click', function(){
-        let model_xDim = Number(document.getElementById("scale").value);
+    function createScalers(titleLabel, inputID, selectUnitsID, buttonID){
+        
+        const title = document.createElement("label"); title.innerHTML = titleLabel; scaleDiv.appendChild(title);
+
+        const inputScale = document.createElement("input"); inputScale.id = inputID; inputScale.style.className = "form-control"; inputScale.type = "text"; inputScale.style.width = "100px"; inputScale.style.marginTop = "10px"; scaleDiv.appendChild(inputScale); scaleDiv.appendChild(inputScale);
+        
+        const space = document.createElement("label"); space.innerHTML = "\xa0"; scaleDiv.appendChild(space)
+
+        const list = document.createElement("select"); list.id = selectUnitsID; list.style.className = "form-control form-control-sm"; list.style.width = "50px"; let units = ["mm", "cm", "m", "inch", "ft"];
+        for (unit in units){
+            opt = document.createElement("option");
+            opt.innerHTML = units[unit];
+            list.appendChild(opt);
+        }
+        list.selectedIndex = 2; scaleDiv.appendChild(list);
+        
+        const btnp = document.createElement("button"); btnp.id = buttonID; btnp.className = "btn btn-primary btn-sm"; btnp.style.padding = "3px"; btnp.style.height = "30px"; btnp.style.width = "30px";
+        btnp.innerHTML = "+"
+        btnp.style.padding = "0px"; btnp.style.border = "0px"; btnp.style.textAlign = "center"; btnp.style.marginLeft = "10px"; btnp.style.marginRight = "20px";
+        scaleDiv.appendChild(btnp);
+    }
+
+    createScalers("Escala x:\xa0", "x_scale", "x_units", "addScaleBtn_x");
+    createScalers("Escala y:\xa0", "y_scale", "y_units", "addScaleBtn_y");
+
+    document.getElementById("addScaleBtn_x").addEventListener('click', function(){
+        let model_xDim = Number(document.getElementById("x_scale").value);
         if (isNaN(model_xDim)){
-            window.alert("Por favor ingresa un número!")
+            window.alert("Por favor ingresa un número!\n\nEl separador decimal es el punto '.' ")
         }else{
-            let x_orig = window.localStorage.getItem("x_orig");
-            let y_orig = window.localStorage.getItem("y_orig");
+            let x_orig = localStorage.getItem("x_orig");
+            let y_orig = localStorage.getItem("y_orig");
             erase(Number(x_orig)-10, Number(y_orig) +15, Number(window.innerWidth), 50);
             drawLine(Number(x_orig), Number(y_orig) + 50, Number(window.innerWidth) - Number(x_orig), Number(y_orig) + 50);
             drawLine(Number(x_orig), Number(y_orig) + 35, Number(x_orig), Number(y_orig) + 65);
             drawLine(Number(window.innerWidth) - Number(x_orig), Number(y_orig) + 35, Number(window.innerWidth) - Number(x_orig), Number(y_orig) + 65);
-            let msg = String(model_xDim) + " " + document.getElementById("units").value;
+            let msg = String(model_xDim) + " " + document.getElementById("x_units").value;
             writeText(Number(window.innerWidth)/2, Number(y_orig) + 35, msg, "gray", "20px Comic Sans M");
-            window.localStorage.setItem("x_scale", String((Number(window.innerWidth)-(2*Number(localStorage.getItem("x_orig"))))/model_xDim));
+            localStorage.setItem("x_scale", String((Number(window.innerWidth)-(2*Number(localStorage.getItem("x_orig"))))/model_xDim));
+        }
+    })
+
+    document.getElementById("addScaleBtn_y").addEventListener('click', function(){
+        let model_yDim = Number(document.getElementById("y_scale").value);
+        if (isNaN(model_yDim)){
+            window.alert("Por favor ingresa un número!\n\nEl separador decimal es el punto '.' ")
+        }else{
+            let x_orig = localStorage.getItem("x_orig");
+            let y_orig = localStorage.getItem("y_orig");
+            erase(0, 0, 80, Number(document.getElementById("myCanvas").height));
+            drawLine(Number(x_orig) - 50, 0, Number(x_orig) - 50, Number(y_orig)/2 - 20);
+            drawLine(Number(x_orig) - 50, Number(y_orig)/2 + 20, Number(x_orig) - 50, Number(y_orig));
+            drawLine(Number(x_orig) - 65, 0, Number(x_orig) - 35, 0);
+            drawLine(Number(x_orig) - 65, Number(y_orig), Number(x_orig) - 35, Number(y_orig));
+            let msg = String(model_yDim) + " " + document.getElementById("y_units").value;
+            writeText(Number(x_orig) - 50, Number(y_orig)/2, msg, "gray", "20px Comic Sans M");
+            localStorage.setItem("y_scale", String(Number(localStorage.getItem("y_orig"))/model_yDim));
         }
     })
 

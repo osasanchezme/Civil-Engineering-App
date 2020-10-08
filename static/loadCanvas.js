@@ -66,8 +66,8 @@ function drawGrids(x_grids){
 function loadAxis(canvas){
     let x_org = 100; // Distance from the left in px
     let y_org = 100; // Distance from the bottom in px
-    window.localStorage.setItem("x_orig", x_org)
-    window.localStorage.setItem("y_orig", Number(canvas.height) - y_org)
+    localStorage.setItem("x_orig", x_org)
+    localStorage.setItem("y_orig", Number(canvas.height) - y_org)
     drawLine(x_org, canvas.height - y_org, x_org + 50, canvas.height - y_org, 2, "green");
     drawLine(x_org, canvas.height - y_org, x_org, canvas.height - y_org - 50, 2, "red");
     writeText(150 + 10, canvas.height - 100 + 5,"X","black", "20px Comic Sans M");
