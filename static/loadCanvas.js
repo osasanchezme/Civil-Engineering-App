@@ -13,7 +13,7 @@ function loadCanvas(ribbon){
 }
 
 /**
-* Draws a line between the given points
+* Draws a line between the given points (in pixels)
 * @param  {Number} xi x-coord initial point
 * @param  {Number} yi y-coord initial point
 * @param  {Number} xj x-coord end point
@@ -48,15 +48,6 @@ function writeText(x ,y , content, color = "black", size = "30px Comic Sans M"){
     ctx.fillStyle = color;
     ctx.textAlign = "center";
     ctx.fillText(content, x, y);
-}
-
-/**
-* Draws all the grids
-*/
-function drawGrids(x_grids){
-    for(i of x_grids){
-        drawLine(parseInt(i), 0, parseInt(i), 600);
-    }
 }
 
 /**

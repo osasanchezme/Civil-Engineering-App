@@ -53,9 +53,18 @@ function addGridRibbon(ribbon){
         if (isNaN(value)){
             window.alert("Por favor ingresa un número válido!")
         }else {
-            // let x = value + Number(localStorage.getItem("x_orig"));
-            let x = value*Number(localStorage.getItem("x_scale")) + Number(localStorage.getItem("x_orig"));
-            drawLine(x, Number(localStorage.getItem("y_orig")), x, 0);
+            if (JSON.parse(localStorage.x_grids).includes(value)){
+                window.alert("Ya existe!")
+            }else{
+                localStorage.x_grids = JSON.stringify(JSON.parse(localStorage.x_grids).concat(value));
+                let x = value*Number(localStorage.getItem("x_scale")) + Number(localStorage.getItem("x_orig"));
+                drawLine(x, Number(localStorage.getItem("y_orig")), x, 0 + JSON.parse(localStorage.top_space));
+                document.getElementById("addGridxValue").value = "";
+
+                let opt = document.createElement("option");
+                opt.innerHTML = String(value)
+                document.getElementById("addGridxSel").appendChild(opt);
+            }
         }
     });
 
@@ -64,9 +73,18 @@ function addGridRibbon(ribbon){
         if (isNaN(value)){
             window.alert("Por favor ingresa un número válido!")
         }else {
-            // let y = Number(localStorage.getItem("y_orig")) - value;
-            let y = Number(localStorage.getItem("y_orig")) - (value*Number(localStorage.getItem("y_scale")));
-            drawLine(Number(localStorage.getItem("x_orig")), y, Number(document.getElementById("myCanvas").width) - Number(localStorage.getItem("x_orig")), y);
+            if (JSON.parse(localStorage.y_grids).includes(value)){
+                window.alert("Ya existe!")
+            }else{
+                localStorage.y_grids = JSON.stringify(JSON.parse(localStorage.y_grids).concat(value));
+                let y = Number(localStorage.getItem("y_orig")) - (value*Number(localStorage.getItem("y_scale")));
+                drawLine(Number(localStorage.getItem("x_orig")), y, Number(document.getElementById("myCanvas").width) - Number(localStorage.getItem("x_orig")), y);
+                document.getElementById("addGridyValue").value = "";
+
+                let opt = document.createElement("option");
+                opt.innerHTML = String(value)
+                document.getElementById("addGridySel").appendChild(opt);
+            }
         }
     });
 
@@ -97,6 +115,13 @@ function addGridRibbon(ribbon){
         btnp.style.marginLeft = "10px";
         btnp.style.marginRight = "20px";
         gridsDiv.appendChild(btnp);
+
+        inputGrid.addEventListener("keyup", function(evt){
+            if(evt.key === "Enter"){
+                evt.preventDefault();
+                btnp.click();
+            }
+        });
 
         const list = document.createElement("select");
         list.id = selectID;
@@ -136,6 +161,13 @@ function addScaleRibbon(ribbon){
         btnp.innerHTML = "+"
         btnp.style.padding = "0px"; btnp.style.border = "0px"; btnp.style.textAlign = "center"; btnp.style.marginLeft = "10px"; btnp.style.marginRight = "20px";
         scaleDiv.appendChild(btnp);
+
+        inputScale.addEventListener("keyup", function(evt){
+            if (evt.key == "Enter"){
+                evt.preventDefault();
+                btnp.click();
+            }
+        })
     }
 
     createScalers("Escala x:\xa0", "x_scale", "x_units", "addScaleBtn_x");
@@ -165,14 +197,15 @@ function addScaleRibbon(ribbon){
         }else{
             let x_orig = localStorage.getItem("x_orig");
             let y_orig = localStorage.getItem("y_orig");
+            let space = JSON.parse(localStorage.top_space)
             erase(0, 0, 80, Number(document.getElementById("myCanvas").height));
-            drawLine(Number(x_orig) - 50, 0, Number(x_orig) - 50, Number(y_orig)/2 - 20);
+            drawLine(Number(x_orig) - 50, space, Number(x_orig) - 50, (Number(y_orig) - space)/2 - 20);
             drawLine(Number(x_orig) - 50, Number(y_orig)/2 + 20, Number(x_orig) - 50, Number(y_orig));
-            drawLine(Number(x_orig) - 65, 0, Number(x_orig) - 35, 0);
+            drawLine(Number(x_orig) - 65, space, Number(x_orig) - 35, space);
             drawLine(Number(x_orig) - 65, Number(y_orig), Number(x_orig) - 35, Number(y_orig));
             let msg = String(model_yDim) + " " + document.getElementById("y_units").value;
             writeText(Number(x_orig) - 50, Number(y_orig)/2, msg, "gray", "20px Comic Sans M");
-            localStorage.setItem("y_scale", String(Number(localStorage.getItem("y_orig"))/model_yDim));
+            localStorage.setItem("y_scale", String(Number(localStorage.getItem("y_orig") - JSON.parse(localStorage.top_space))/model_yDim));
         }
     })
 
@@ -187,7 +220,21 @@ function mousepos() {
     const canvas = document.getElementById('myCanvas');
     canvas.addEventListener('mousemove', function(evt) {
         let rect = canvas.getBoundingClientRect();
-        let message = '[' + parseInt(evt.clientX - rect.left - 100) + ',' + parseInt((evt.clientY - rect.top - canvas.height + 100)*-1) + ']';
+        let x_pos = (evt.clientX - rect.left - Number(localStorage.getItem("x_orig"))) / Number(localStorage.getItem("x_scale"));
+        let y_pos = (evt.clientY - rect.top - Number(localStorage.getItem("y_orig"))) * -1 / Number(localStorage.getItem("y_scale"));
+        x_pos = getFormatted(x_pos);
+        y_pos = getFormatted(y_pos);
+        let message = '[' + x_pos + ',' + y_pos + ']';
         document.getElementById("mousePos").innerHTML = message;
-    }, false);
+
+        function getFormatted(number){
+            nd_int = 1;
+            num = parseInt(number);
+            while(parseInt(num/10)>0){
+                num = parseInt(num/10);
+                nd_int +=1;
+            }
+            return number.toString().substring(0,nd_int+2) 
+        }
+    },false);
 }
