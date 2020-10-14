@@ -2,7 +2,7 @@
 * Loads the ribbon
 * @returns {HTMLDivElement} Div ribbon containing all the needed elements, also appends itself to the document body
 */
-function loadRibbon(){
+loadRibbon = () => {
     // Create the ribbon
     const ribbon = document.createElement("div");
     ribbon.style.width = String(window.innerWidth) + "px";
@@ -37,7 +37,7 @@ function loadRibbon(){
 * Grid section in the main Ribbon
 * @param {HTMLDivElement} ribbon Div which represents the ribbon
 */
-function addGridRibbon(ribbon){
+addGridRibbon = (ribbon) => {
     const gridsDiv = document.createElement("div");
     gridsDiv.className = "ribbon_divs";
     gridsDiv.style.width = "300px";
@@ -48,7 +48,7 @@ function addGridRibbon(ribbon){
     gridsDiv.appendChild(document.createElement("br"));
     createGridCreator("y", "addGridyValue", "addGridyBtn", "addGridySel", gridsDiv);
 
-    document.getElementById("addGridxBtn").addEventListener('click', function(){
+    document.getElementById("addGridxBtn").addEventListener('click', () =>{
         let value = Number(document.getElementById("addGridxValue").value);
         if (isNaN(value)){
             window.alert("Por favor ingresa un número válido!")
@@ -68,7 +68,7 @@ function addGridRibbon(ribbon){
         }
     });
 
-    document.getElementById("addGridyBtn").addEventListener('click', function(){
+    document.getElementById("addGridyBtn").addEventListener('click', () =>{
         let value = Number(document.getElementById("addGridyValue").value);
         if (isNaN(value)){
             window.alert("Por favor ingresa un número válido!")
@@ -89,7 +89,7 @@ function addGridRibbon(ribbon){
     });
 
 
-    function createGridCreator(labelStr, inputID, buttonID, selectID, gridsDiv){
+    function createGridCreator (labelStr, inputID, buttonID, selectID, gridsDiv) {
         const lbl = document.createElement("label");
         lbl.innerHTML = labelStr + "\xa0=\xa0";
         gridsDiv.appendChild(lbl);
@@ -116,7 +116,7 @@ function addGridRibbon(ribbon){
         btnp.style.marginRight = "20px";
         gridsDiv.appendChild(btnp);
 
-        inputGrid.addEventListener("keyup", function(evt){
+        inputGrid.addEventListener("keyup", (evt) =>{
             if(evt.key === "Enter"){
                 evt.preventDefault();
                 btnp.click();
@@ -138,10 +138,10 @@ function addGridRibbon(ribbon){
  * Adds the scaling ribbon
  * @param {HTMLDivElement} ribbon Div which represents the ribbon
  */
-function addScaleRibbon(ribbon){
+addScaleRibbon = (ribbon) => {
     const scaleDiv = document.createElement("div"); scaleDiv.className = "ribbon_divs"; scaleDiv.style.width = "300px"; scaleDiv.style.height = ribbon.style.height; ribbon.appendChild(scaleDiv);
 
-    function createScalers(titleLabel, inputID, selectUnitsID, buttonID){
+    createScalers = (titleLabel, inputID, selectUnitsID, buttonID) => {
         
         const title = document.createElement("label"); title.innerHTML = titleLabel; scaleDiv.appendChild(title);
 
@@ -162,7 +162,7 @@ function addScaleRibbon(ribbon){
         btnp.style.padding = "0px"; btnp.style.border = "0px"; btnp.style.textAlign = "center"; btnp.style.marginLeft = "10px"; btnp.style.marginRight = "20px";
         scaleDiv.appendChild(btnp);
 
-        inputScale.addEventListener("keyup", function(evt){
+        inputScale.addEventListener("keyup", (evt) =>{
             if (evt.key == "Enter"){
                 evt.preventDefault();
                 btnp.click();
@@ -173,7 +173,7 @@ function addScaleRibbon(ribbon){
     createScalers("Escala x:\xa0", "x_scale", "x_units", "addScaleBtn_x");
     createScalers("Escala y:\xa0", "y_scale", "y_units", "addScaleBtn_y");
 
-    document.getElementById("addScaleBtn_x").addEventListener('click', function(){
+    document.getElementById("addScaleBtn_x").addEventListener('click', () =>{
         let model_xDim = Number(document.getElementById("x_scale").value);
         if (isNaN(model_xDim)){
             window.alert("Por favor ingresa un número!\n\nEl separador decimal es el punto '.' ")
@@ -187,10 +187,12 @@ function addScaleRibbon(ribbon){
             let msg = String(model_xDim) + " " + document.getElementById("x_units").value;
             writeText(Number(window.innerWidth)/2, Number(y_orig) + 35, msg, "gray", "20px Comic Sans M");
             localStorage.setItem("x_scale", String((Number(window.innerWidth)-(2*Number(localStorage.getItem("x_orig"))))/model_xDim));
+            localStorage.x_dim = String(model_xDim);
+            localStorage.x_units = document.getElementById("x_units").value;
         }
     })
 
-    document.getElementById("addScaleBtn_y").addEventListener('click', function(){
+    document.getElementById("addScaleBtn_y").addEventListener('click', () =>{
         let model_yDim = Number(document.getElementById("y_scale").value);
         if (isNaN(model_yDim)){
             window.alert("Por favor ingresa un número!\n\nEl separador decimal es el punto '.' ")
@@ -206,6 +208,8 @@ function addScaleRibbon(ribbon){
             let msg = String(model_yDim) + " " + document.getElementById("y_units").value;
             writeText(Number(x_orig) - 50, Number(y_orig)/2, msg, "gray", "20px Comic Sans M");
             localStorage.setItem("y_scale", String(Number(localStorage.getItem("y_orig") - JSON.parse(localStorage.top_space))/model_yDim));
+            localStorage.y_dim = String(model_yDim);
+            localStorage.y_units = document.getElementById("y_units").value;
         }
     })
 
@@ -216,9 +220,9 @@ function addScaleRibbon(ribbon){
 /**
 * Updates the coordinates mesage when moving the mouse over the canvas
 */
-function mousepos() {
+mousepos = () =>  {
     const canvas = document.getElementById('myCanvas');
-    canvas.addEventListener('mousemove', function(evt) {
+    canvas.addEventListener('mousemove', (evt) => {
         let rect = canvas.getBoundingClientRect();
         let x_pos = (evt.clientX - rect.left - Number(localStorage.getItem("x_orig"))) / Number(localStorage.getItem("x_scale"));
         let y_pos = (evt.clientY - rect.top - Number(localStorage.getItem("y_orig"))) * -1 / Number(localStorage.getItem("y_scale"));

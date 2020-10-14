@@ -3,12 +3,18 @@
 * @param {HTMLDivElement} ribbon Div which represents the ribbon
 * @returns {HTMLCanvasElement} A canvas that will be the drawing area
 */
-function loadCanvas(ribbon){
+loadCanvas = (ribbon) => {
     const canvas = document.createElement("canvas");
     canvas.width = window.innerWidth;
     canvas.height = Number(window.innerHeight) - Number(ribbon.style.height.substring(0,2));
     canvas.id = "myCanvas";
     document.body.appendChild(canvas);
+    loadAxis(canvas);
+
+    localStorage.x_dim = String(canvas.width - 2*Number(localStorage.x_orig));
+    localStorage.y_dim = String(Number(localStorage.y_orig) - JSON.parse(localStorage.top_space));
+    localStorage.x_units = 'px';
+    localStorage.y_units = 'px';
     return canvas;
 }
 
@@ -21,7 +27,7 @@ function loadCanvas(ribbon){
 * @param  {Number} linewidth Line Width desired
 * @param  {String} color color desired for the line
 */
-function drawLine(xi, yi, xj, yj, linewidth = 0.5, color = "black"){
+drawLine = (xi, yi, xj, yj, linewidth = 0.5, color = "black") => {
     const canvas = document.getElementById("myCanvas")
     const ctx = canvas.getContext('2d');
     ctx.beginPath();
@@ -41,7 +47,7 @@ function drawLine(xi, yi, xj, yj, linewidth = 0.5, color = "black"){
  * @param {String} color Desired color for the text. Default: "black"
  * @param {String} size Desired style for the text. Default: "30px Comic Sans M"
  */
-function writeText(x ,y , content, color = "black", size = "30px Comic Sans M"){
+writeText = (x ,y , content, color = "black", size = "30px Comic Sans M") => {
     let canvas = document.getElementById("myCanvas");
     let ctx = canvas.getContext("2d");
     ctx.font = size;
@@ -54,7 +60,7 @@ function writeText(x ,y , content, color = "black", size = "30px Comic Sans M"){
  * Draws the axis on the canvas
  * @param {HTMLCanvasElement} canvas Element in which to place the axis
  */
-function loadAxis(canvas){
+loadAxis = (canvas) => {
     let x_org = 100; // Distance from the left in px
     let y_org = 100; // Distance from the bottom in px
     localStorage.setItem("x_orig", x_org)
@@ -65,7 +71,7 @@ function loadAxis(canvas){
     writeText(100, canvas.height - 150 - 7 ,"Y","black", "20px Comic Sans M");
 }
 
-function erase(x, y, w, h){
+erase = (x, y, w, h) => {
     let canvas = document.getElementById("myCanvas");
     let ctx = canvas.getContext("2d");
     ctx.clearRect(x, y, w, h)
