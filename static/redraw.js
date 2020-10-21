@@ -1,4 +1,5 @@
 redraw = () => {
+    // console.log('Redrawing...')
     let canvas = document.getElementById("myCanvas");
     erase(0,0,canvas.width,canvas.height);
     loadAxis(canvas);

@@ -15,6 +15,7 @@ loadCanvas = (ribbon) => {
     localStorage.y_dim = String(Number(localStorage.y_orig) - JSON.parse(localStorage.top_space));
     localStorage.x_units = 'px';
     localStorage.y_units = 'px';
+
     return canvas;
 }
 
@@ -37,6 +38,15 @@ drawLine = (xi, yi, xj, yj, linewidth = 0.5, color = "black") => {
     ctx.strokeStyle = color;
     ctx.stroke();
     // Save each line that is drawn or find a way to get all the drawn lines info
+}
+
+drawCircle = (x,y,r) => {
+    // console.log('Circle!')
+    const canvas = document.getElementById("myCanvas")
+    const ctx = canvas.getContext('2d');
+    ctx.beginPath();
+    ctx.arc(x, y, r, 0,2*Math.PI);
+    ctx.stroke();
 }
 
 /**

@@ -40,13 +40,13 @@ loadRibbon = () => {
 addGridRibbon = (ribbon) => {
     const gridsDiv = document.createElement("div");
     gridsDiv.className = "ribbon_divs";
-    gridsDiv.style.width = "300px";
+    gridsDiv.style.width = "350px";
     gridsDiv.style.height = ribbon.style.height;
     ribbon.appendChild(gridsDiv);
 
-    createGridCreator("x", "addGridxValue", "addGridxBtn", "addGridxSel", gridsDiv);
+    createGridCreator("x", "addGridxValue", "addGridxBtn", "addGridxSel", gridsDiv, "delGridxBtn");
     gridsDiv.appendChild(document.createElement("br"));
-    createGridCreator("y", "addGridyValue", "addGridyBtn", "addGridySel", gridsDiv);
+    createGridCreator("y", "addGridyValue", "addGridyBtn", "addGridySel", gridsDiv, "delGridyBtn");
 
     document.getElementById("addGridxBtn").addEventListener('click', () =>{
         let value = Number(document.getElementById("addGridxValue").value);
@@ -88,8 +88,36 @@ addGridRibbon = (ribbon) => {
         }
     });
 
+    document.getElementById("delGridxBtn").addEventListener('click', () =>{
+        let sel_x = document.getElementById("addGridxSel");
+        let value = sel_x.options[sel_x.selectedIndex].value;
+        if (sel_x.selectedIndex == 0){
+            window.alert("Por favor selecciona la linea que deseas borrar.")
+        }else{
+            let list_x = JSON.parse(localStorage.x_grids);
+            list_x.splice(list_x.indexOf(Number(value)),1);
+            localStorage.x_grids = JSON.stringify(list_x)
+            sel_x.remove(sel_x.selectedIndex);
+            redraw();
+        }
+    })
 
-    function createGridCreator (labelStr, inputID, buttonID, selectID, gridsDiv) {
+    document.getElementById("delGridyBtn").addEventListener('click', () =>{
+        let sel_y = document.getElementById("addGridySel");
+        let value = sel_y.options[sel_y.selectedIndex].value;
+        if (sel_y.selectedIndex == 0){
+            window.alert("Por favor selecciona la linea que deseas borrar.")
+        }else{
+            let list_y = JSON.parse(localStorage.y_grids);
+            list_y.splice(list_y.indexOf(Number(value)),1);
+            localStorage.y_grids = JSON.stringify(list_y)
+            sel_y.remove(sel_y.selectedIndex);
+            redraw();
+        }
+    })
+
+
+    function createGridCreator (labelStr, inputID, buttonID, selectID, gridsDiv, delBtnID) {
         const lbl = document.createElement("label");
         lbl.innerHTML = labelStr + "\xa0=\xa0";
         gridsDiv.appendChild(lbl);
@@ -131,6 +159,19 @@ addGridRibbon = (ribbon) => {
         opt.innerHTML = "Agregar..."
         list.appendChild(opt);
         gridsDiv.appendChild(list);
+
+        const btnd = document.createElement("button");
+        btnd.id = delBtnID;
+        btnd.className = "btn btn-primary btn-sm";
+        btnd.style.padding = "1px";
+        btnd.style.height = "30px";
+        btnd.style.width = "30px";
+        btnd.innerHTML = "-"
+        btnd.style.padding = "0px";
+        btnd.style.border = "0px";
+        btnd.style.textAlign = "center";
+        btnd.style.marginLeft = "10px";
+        gridsDiv.appendChild(btnd);
     }
 }
 
@@ -139,7 +180,7 @@ addGridRibbon = (ribbon) => {
  * @param {HTMLDivElement} ribbon Div which represents the ribbon
  */
 addScaleRibbon = (ribbon) => {
-    const scaleDiv = document.createElement("div"); scaleDiv.className = "ribbon_divs"; scaleDiv.style.width = "300px"; scaleDiv.style.height = ribbon.style.height; ribbon.appendChild(scaleDiv);
+    const scaleDiv = document.createElement("div"); scaleDiv.className = "ribbon_divs"; scaleDiv.style.width = "280px"; scaleDiv.style.height = ribbon.style.height; ribbon.appendChild(scaleDiv);
 
     createScalers = (titleLabel, inputID, selectUnitsID, buttonID) => {
         
@@ -159,7 +200,7 @@ addScaleRibbon = (ribbon) => {
         
         const btnp = document.createElement("button"); btnp.id = buttonID; btnp.className = "btn btn-primary btn-sm"; btnp.style.padding = "3px"; btnp.style.height = "30px"; btnp.style.width = "30px";
         btnp.innerHTML = "+"
-        btnp.style.padding = "0px"; btnp.style.border = "0px"; btnp.style.textAlign = "center"; btnp.style.marginLeft = "10px"; btnp.style.marginRight = "20px";
+        btnp.style.padding = "0px"; btnp.style.border = "0px"; btnp.style.textAlign = "center"; btnp.style.marginLeft = "10px"; btnp.style.marginRight = "6px";
         scaleDiv.appendChild(btnp);
 
         inputScale.addEventListener("keyup", (evt) =>{
@@ -189,6 +230,8 @@ addScaleRibbon = (ribbon) => {
             localStorage.setItem("x_scale", String((Number(window.innerWidth)-(2*Number(localStorage.getItem("x_orig"))))/model_xDim));
             localStorage.x_dim = String(model_xDim);
             localStorage.x_units = document.getElementById("x_units").value;
+
+            redraw();
         }
     })
 
@@ -210,11 +253,21 @@ addScaleRibbon = (ribbon) => {
             localStorage.setItem("y_scale", String(Number(localStorage.getItem("y_orig") - JSON.parse(localStorage.top_space))/model_yDim));
             localStorage.y_dim = String(model_yDim);
             localStorage.y_units = document.getElementById("y_units").value;
+
+            redraw();
         }
     })
 
     // Also add the ability to import different parts of an existant model
     // Delete grids
+}
+
+snapCircle = () => {
+    x = JSON.parse(localStorage.posCircle)[0]
+    y = JSON.parse(localStorage.posCircle)[1]
+    if (x != null && y != null){
+        drawCircle(Number(x), Number(y), 3)
+    }
 }
 
 /**
@@ -240,5 +293,64 @@ mousepos = () =>  {
             }
             return number.toString().substring(0,nd_int+2) 
         }
+
+        // drawCircle(evt.clientX - rect.left, evt.clientY - rect.top, 3)
+
+        let x_grids = JSON.parse(localStorage.x_grids);
+        let y_grids = JSON.parse(localStorage.y_grids);
+        let x_scale = Number(localStorage.x_scale);
+        let y_scale = Number(localStorage.y_scale);
+        let x_orig = Number(localStorage.x_orig);
+        let y_orig = Number(localStorage.y_orig);
+
+        for (let i = 0; i < x_grids.length; i++) {
+            let x = x_grids[i];
+            for (let j = 0; j< y_grids.length; j++) {
+                let y = y_grids[j];
+
+                let xx = Number(x) * x_scale + x_orig;
+                let yy = y_orig - Number(y) * y_scale;
+                let x_mouse = evt.clientX - rect.left;
+                let y_mouse = evt.clientY - rect.top;
+                
+                let xls = JSON.parse(localStorage.posCircle)[0]
+                let yls = JSON.parse(localStorage.posCircle)[1]
+
+                if (x_mouse >= xx*0.9 && x_mouse <= xx*1.1 && y_mouse >= yy*0.9 && y_mouse <= yy*1.1){
+                    if (xls == null && yls == null){
+                        localStorage.posCircle = JSON.stringify([xx, yy])
+                        snapCircle();
+                    }
+                    j = y_grids.length + 10;
+                    i = x_grids.length + 10;
+                }else{
+                    redraw();
+                    localStorage.posCircle = JSON.stringify([null, null])
+                }
+            }
+            
+        }
+        // x_grids.forEach(x => {
+        //     y_grids.forEach(y =>{
+        //         let xx = Number(x) * x_scale + x_orig;
+        //         let yy = y_orig - Number(y) * y_scale;
+        //         let x_mouse = evt.clientX - rect.left;
+        //         let y_mouse = evt.clientY - rect.top;
+                
+        //         let xls = JSON.parse(localStorage.posCircle)[0]
+        //         let yls = JSON.parse(localStorage.posCircle)[1]
+
+        //         if (x_mouse >= xx*0.9 && x_mouse <= xx*1.1 && y_mouse >= yy*0.9 && y_mouse <= yy*1.1){
+        //             if (xls == null && yls == null){
+        //                 localStorage.posCircle = JSON.stringify([xx, yy])
+        //                 snapCircle();
+        //             }
+        //         }else{
+        //             redraw();
+        //             localStorage.posCircle = JSON.stringify([null, null])
+        //         }
+        //     })
+        // });
+
     },false);
 }
